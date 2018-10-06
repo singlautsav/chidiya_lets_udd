@@ -1,0 +1,135 @@
+import cassette.audiofiles.SoundFile;
+ 
+SoundFile music;
+
+
+
+void setup() { 
+    fullScreen();
+    music = new SoundFile(this, chosenWord);
+    
+}
+ 
+color colA = color(227, 228, 229);
+color colB = color(181, 182, 183);
+ 
+String pos[] = {"airplane.aiff","balloon.aiff","cheel.aiff","chidiya.aiff","jet.aiff","kabootar.aiff","kauva.aiff","kingfisher.aiff","koyal.aiff","lufthansa.aiff","maina.aiff","makkhi.aiff","patang.aiff","rocket.aiff","sparrow.aiff","titli.aiff","totaa.aiff","udnkhatola.aiff"};
+String neg[] = {"aloo.aiff","bandar.aiff","cow.aiff","gaadi.aiff","gadha.aiff","ghar.aiff","sher.aiff","table.aiff","billi.aiff","haathi.aiff","kapda.aiff","kursi.aiff","machhli.aiff","murgi.aiff","TV.aiff"};
+ 
+int scoreA = 0;
+int scoreB = 0;
+int noOfPlayers = 2;
+ 
+boolean wordChosen = false;
+int choice;
+String chosenWord;
+void SelectWord() {
+  int r = int(random(2));
+  choice = r;
+  if (r == 0){
+    int x = int(random(pos.length));
+    chosenWord = pos[x];
+  }
+  else {
+    int x = int(random(neg.length));
+    chosenWord = neg[x];
+  }
+  wordChosen = true;
+  //file = new SoundFile(this, chosenWord);
+  //file.play();
+  //mp.start();
+  music.loop();
+}
+ 
+int selectPlayer() {
+  if (touches.length == 1) {
+    // println("One touch");
+    if (touches[0].y < height/2) {
+      return 0;
+    }
+    else return 1;
+  } else if (touches.length == 2){
+    return 2;
+  }
+  else {
+    return 3;
+  }
+}
+ 
+void changeColor(ArrayList<Integer> x) {
+  if (x.contains(3)) {
+    if (choice == 0) {
+      colA = color(0, 255, 0);
+      colB = color(0, 255, 0);
+    }
+    else {
+      colA = color(255, 0, 0);
+      colB = color(255, 0, 0);
+    }
+  }
+  else if (x.contains(1)) {
+    if (choice == 0) {
+      colA = color(0, 255, 0);
+      colB = color(255, 0, 0);
+    }
+    else {
+      colA = color(255, 0, 0);
+      colB = color(0, 255, 0);
+    }
+  }
+  else if (x.contains(0)) {
+    if (choice == 1) {
+      colA = color(0, 255, 0);
+      colB = color(255, 0, 0);
+    }
+    else {
+      colA = color(255, 0, 0);
+      colB = color(0, 255, 0);
+    }
+  }
+  else {
+    if (choice == 0) {
+      colA = color(255, 0, 0);
+      colB = color(255, 0, 0);
+    }
+    else {
+      colA = color(0, 255, 0);
+      colB = color(0, 255, 0);
+    }
+  }
+}
+ 
+int m = 0, e = 0;
+ArrayList<Integer> outputs = new ArrayList<Integer>();
+void draw() {
+  fill(colA);
+  rect(0, 0, width, height/2);
+  fill(colB);
+  rect(0, height/2, width, height/2);
+  if (touches.length == noOfPlayers && wordChosen == false) {
+    colA = color(227, 228, 229);
+    colB = color(181, 182, 183);
+    SelectWord();
+    m = millis();
+    e = m + 3000;
+    //println(m,e);
+    println(chosenWord);
+    outputs = new ArrayList<Integer>();
+  }
+  else {
+    if (millis() < e) {
+      int x = selectPlayer();
+      if (!outputs.contains(x)) {
+        println(x);
+        outputs.add(x);
+      }
+    }
+    if (millis() > e) {
+       changeColor(outputs);
+    }
+    if (touches.length == noOfPlayers && millis() > e) {
+      //for (int i:outputs) println(i);
+      wordChosen = false;
+    }
+  }
+}
